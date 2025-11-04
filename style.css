@@ -1,0 +1,38 @@
+body {
+    background-color: #739EC9;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    color: #fff;
+}
+
+form {
+    background-color: #FFE8DB;
+    padding: 20px;
+    border-radius: 20px;
+    display: inline-block;
+    text-align: left;
+    box-shadow: 0px 10px 20px #5682B1;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+}
+
+button {
+    background-color: #5682B1;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.8s;
+}
+
+button:hover {
+    background-color: #000;
+    color: #fff;
+}
