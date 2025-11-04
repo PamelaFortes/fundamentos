@@ -7,9 +7,9 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Quiz de Conhecimentos Gerais</h1>
+        <h1>Quiz de Gerais de Tecnologia</h1>
 
-        <form action="resultado.php" method="POST">
+        <form action="resultado_tecnologia.php" method="POST">
             <h3>1) Qual é a capital do Brasil?</h3>
             <input type="radio" name="q1" value="a"> São Paulo <br>
             <input type="radio" name="q1" value="b"> Rio de Janeiro <br>

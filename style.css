@@ -36,3 +36,68 @@ button:hover {
     background-color: #000;
     color: #fff;
 }
+
+.container-cards{
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.cards{
+    border: 2px #ffffff solid;
+    border-radius: 10px;
+    padding: 16px;
+    margin: 10px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    cursor: pointer;
+    min-height: 250px;
+    transition: all 0.3s ease;
+}
+.cards a{
+    text-decoration: none;
+    color:#fff;
+}
+.cards:hover{
+    border-color:#ffffff;
+    background-color: #69339e75;
+    transform: scale(1.02);
+    
+}
+
+#start{
+    background-color: #69339e75;
+    padding: 10px 20px;
+    border-radius: 10px;    
+    cursor: pointer;
+    transition: background 0.8s;
+
+}
+
+#start:hover{
+    transition: all 0.3s ease;
+    background-color: #fff;
+    color: #69339e75;
+}
+
+h2{
+    color: #fff;
+}
+
+p{
+    color: #fff;
+}
+
+.navbar{
+    display: flex; 
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 10px;
+    height: 250px;
+    width: 250px;
+}
+
+alinhar o navbar na prox aula
