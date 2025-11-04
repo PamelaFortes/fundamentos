@@ -35,7 +35,7 @@ if (!isset($_SESSION['usuario_id'])) {
     <div class="cards">
         <div>
             <h2> Quiz de Tecnologia</h2>
-            <p>Operaçoes básicas, lógica e raciocínio numérico. </p>
+            <p>Operações básicas, lógica e raciocínio numérico. </p>
             <div>
                 <a href="quiz_tecnologia.php">Começar</a>
             </div>
