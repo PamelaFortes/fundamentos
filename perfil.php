@@ -10,7 +10,7 @@ if (!isset($_SESSION['usuario_id'])) {
 $userId = (int) $_SESSION['usuario_id'];
 $msg = "";
 
-$stmt = $conn -> prepare("SELECT id, nome, email, senha FROM usuarios WHERE id = ? LIMIT 1");
+$stmt = $conn -> prepare("SELECT id, nome, email, senha, foto_perfil FROM usuarios WHERE id = ? LIMIT 1");
 $stmt -> bind_param("i", $userId);
 $stmt -> execute();
 $result = $stmt -> get_result();
@@ -24,6 +24,44 @@ if (!$result || !$result -> num_rows) {
 
 $user = $result -> fetch_assoc();
 $stmt -> close();
+
+//p armazenar imagens
+$dirUpload = __DIR__ . 'upload/avatar';
+$urlBase = 'uploads/avatar';
+$tamanhoMaximo = 2 * 1024 * 1024;
+$tiposExtensao = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+
+
+//limpeza cache armazenamento de imagens
+
+function limparArquivoAntigo(?string $caminhoRelativo): void{
+    if (!$caminhoRelativo) return;
+    $arquivo = __DIR__ . "/" . $caminhoRelativo;
+    if(is_file($arquivo)){
+        @unlink($arquivo);
+    }
+}
+
+//envio de foto
+if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'upload'){
+    if (!isset($_FILES['foto']) || $_FILES['foto']['error'] !== UPLOAD_ERR_OK){
+        $feedback = ['tipo' => 'erro', 'msg' => 'Falha no Upload. Selecione um arquivo valido.'];
+    }else{
+        $foto = $_FILES['foto'];
+    } 
+
+    //validao do tipo da foto
+
+    $mime = mime_content_type($foto['tmp_name']);
+    if (!isset($tiposExtensao[$mime])) {
+        $feedback = ['tipo' => 'erro', 'msg' => 'Formato invalido. Envie um arquivo com formato JPG, PNG ou WEBP.'];
+    }elseif($foto['size'] > $tamanhoMaximo){
+        $feedback = ['tipo' => 'erro', 'msg' => 'Arquivo muito grande (max 2MB).'];
+    }
+
+}
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $novoNome = trim($_POST['nome'] ?? $user['nome']);

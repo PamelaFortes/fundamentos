@@ -46,6 +46,15 @@ if (!isset($_SESSION['usuario_id'])) {
                     <a href="quiz_tecnologia.php">Começar</a>
                 </div>
         </div>
+        <div class="cards">
+            <div>
+                <h2> Quiz de Filmes</h2>
+                <p>Perguntas variadas sobre filmes. </p>
+            </div>
+                <div id="start">
+                    <a href="quiz_filmes.php">Começar</a>
+                </div>
+        </div>
     </div>
 </body>
 </html>

@@ -11,11 +11,11 @@
 
     <?php
     $gabarito = [
-        "q1" => "c", // A alternativa correta é O armazenamento e processamento de dados na internet por meio de servidores remotos.
-        "q2" => "c", // A alternativa correta é Leonardo da Simular o raciocínio humano e aprender com dados.
-        "q3" => "b", // A alternativa correta é Uma técnica para enganar pessoas e roubar dados pessoais.
-        "q4" => "b", // A alternativa correta é Um relógio inteligente conectado à internet.
-        "q5" => "c" // A alternativa correta é Siri
+        "q1" => "a", // A alternativa correta é Ben Hur.
+        "q2" => "c", // A alternativa correta é Christopher Nolan
+        "q3" => "c", // A alternativa correta é Titanic.
+        "q4" => "d", // A alternativa correta é Pantera Negra.
+        "q5" => "c" // A alternativa correta é Quem voce vai chamar?
     ];
     
     $pontos = 0;
