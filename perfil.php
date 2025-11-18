@@ -41,6 +41,7 @@ function limparArquivoAntigo(?string $caminhoRelativo): void{
         @unlink($arquivo);
     }
 }
+$feedback = null;
 
 //envio de foto
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'upload'){
@@ -50,18 +51,68 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['aca
         $foto = $_FILES['foto'];
     } 
 
-    //validao do tipo da foto
+    //validaco do tipo da foto
 
     $mime = mime_content_type($foto['tmp_name']);
     if (!isset($tiposExtensao[$mime])) {
         $feedback = ['tipo' => 'erro', 'msg' => 'Formato invalido. Envie um arquivo com formato JPG, PNG ou WEBP.'];
     }elseif($foto['size'] > $tamanhoMaximo){
         $feedback = ['tipo' => 'erro', 'msg' => 'Arquivo muito grande (max 2MB).'];
-    }
+    }else{
+        //gera nome único: useID_timestamp.ext
+        $ext = $tiposAceitos[$mime];
+        $nomeUnico = 'u' . $usuarioID . '_' . time() . '.' . $ext;
 
+        //Garante diretorio
+        if (!is_dir($dirUpload)){
+            @mkdir($dirUpload, 0775, true);
+        }
+
+        //Mover
+
+        $destinoFs = $dirUpload . $nomeUnico;
+        $destinoRel = $urlBase . $nomeUnico;
+        if (move_uploaded_file($foto['tmp_name'], $destinoFs)) {
+                // Apaga a antiga (se houver)
+                limparArquivoAntigo($usuario['foto_perfil']);
+
+                // Atualiza Banco de Dados
+                $up = $conn -> prepare("UPDATE usuarios SET foto_perfil = ? WHERE id = ?");
+                $up -> bind_param("si", $destinoRel, $usuarioId);
+                if ($up -> execute()) {
+                    $feedback = ['tipo' => 'ok', 'msg' => 'Foto atualizada com sucesso!'];
+                    $usuario['foto_perfil'] = $destinoRel;
+                } else {
+                    // Se falhar, remover o arquivo recém adicionado no banco
+                    @unlink($destinoFs);
+                    $feedback = ['tipo' => 'erro', 'msg' => 'Não foi possível salvar no banco. Tente novamente.'];
+                }
+                $up -> close();
+            }else {
+                $feedback = ['tipo' => 'erro', 'msg' => 'Não foi possível mover o arquivo. Verifique permissões.'];
+        }
+    }
 }
 
+// Remover o foto
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['acao'] === 'remover') {
+    // Apagando a foto da pasta uploads
+    limparArquivoAntigo($usuario['foto_perfil']);
+    
+    // Limpar agora no Banco de Dados
+    $up = $conn -> prepare("UPDATE usuarios SET foto_perfil = NULL WHERE id = ?");
+    $up -> bind_param("i", $usuarioId);
+    if ($up -> execute()) {
+        $feedback = ['tipo' => 'ok', 'msg' => 'Foto removida.'];
+        $usuario['foto_perfil'] = null;
+    } else {
+        $feedback = ['tipo' => 'erro', 'msg' => 'Não foi possível remover a foto.'];
+    }
+    $up -> close();
+}
 
+// Caminho será exibido (retorno para placeholder)
+$srcFoto = $usuario['foto_perfil'] ?: 'assets/avatar-default.png';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $novoNome = trim($_POST['nome'] ?? $user['nome']);
@@ -152,6 +203,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method='POST'>
             <div>
                 <div>
+                    <img src="<?= htmlspecialchars($srcFoto) ?>" alt="Foto de Perfil">
+                    <p>Formatos: JPG/PNG/WEBP - Máx: 2MB</p>
+                </div>
+
+                <div>
+                    <form method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="acao" value="upload">
+                        <div>
+                            <input type="file" name="foto" accept="image/jpeg, image/png, image/webp" required>
+                        </div>
+                        <div>
+                            <button type="submit">Atualizar foto</button>
+                            <?php if (!empty($usuario['foto_perfil'])): ?>
+                                <button type="submit" name="acao" value="remover" onclick="return confirm('Remover sua foto atual?')">Remover foto</button>
+                            <?php endif; ?>
+                        </div>
+                    </form>
+                </div>
+                
+                <div>
                     <?= htmlspecialchars($user['nome'])?>
                 </div>
                 <div>
@@ -163,6 +234,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
             </div>
+
+            <br>
 
             <div>Dados Básicos</div>
             <div>
